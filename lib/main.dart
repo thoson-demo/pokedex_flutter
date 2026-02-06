@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_strategy/url_strategy.dart';
 import 'screens/home_page.dart';
 import 'screens/pokemon_page.dart';
 
 void main() {
+  // Remove the '#' from web URLs (use path URL strategy)
+  setPathUrlStrategy();
   runApp(const PokedexApp());
 }
 
