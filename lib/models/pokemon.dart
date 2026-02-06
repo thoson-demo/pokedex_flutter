@@ -15,7 +15,7 @@ class Pokemon {
         id: id,
         name: json['name'],
         imageUrl:
-            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png',
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png',
       );
     }
     // Handling detail response
@@ -23,7 +23,10 @@ class Pokemon {
       return Pokemon(
         id: json['id'],
         name: json['name'],
-        imageUrl: json['sprites']['front_default'] ?? '',
+        imageUrl:
+            json['sprites']['other']['official-artwork']['front_default'] ??
+            json['sprites']['front_default'] ??
+            '',
       );
     }
   }
