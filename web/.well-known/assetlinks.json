@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "it.thoson.pokedex",
+      "sha256_cert_fingerprints": ["3B:F2:C3:84:9C:F7:18:14:14:A9:2F:5D:3B:A0:EC:E3:7A:CE:F6:7F:66:B6:D7:06:5A:E7:DD:EF:61:D6:BA:9D"]
+    }
+  }
+]
