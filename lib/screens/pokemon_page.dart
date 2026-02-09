@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/pokemon.dart';
 import '../services/pokemon_service.dart';
 
@@ -17,6 +18,10 @@ class _PokemonPageState extends State<PokemonPage> {
   final PokemonService _pokemonService = PokemonService();
   Pokemon? _pokemon;
   bool _isLoading = true;
+
+  // Base host for building shareable links. Update if your host changes.
+  static const String _webHost = 'https://pokedex.thoson.io.vn';
+  static const String _customScheme = 'pokedex://';
 
   @override
   void initState() {
@@ -43,6 +48,30 @@ class _PokemonPageState extends State<PokemonPage> {
     }
   }
 
+  void _sharePokemon() {
+    if (_pokemon == null) return;
+
+    final id = _pokemon!.id;
+    final httpsUrl = '$_webHost/pokemon/$id';
+    final customUrl = '$_customScheme/pokemon/$id';
+
+    final text = 'Pokédex: ${_pokemon!.name}\n\n${_pokemon!.name.toUpperCase()}\n\nSee details:\n$httpsUrl\n'
+        'Open in app: $customUrl';
+
+    // share_plus's Share API may not support a `subject` named parameter
+    // on all platforms/versions. Use the SharePlus.instance.share API which
+    // is the non-deprecated API surface.
+    // Prefer using SharePlus.instance.share; it supports `subject` on
+    // platforms where available. If `subject` causes an analyzer error in
+    // your environment, remove the `subject:` named parameter.
+    try {
+      SharePlus.instance.share(ShareParams(text: text, title: 'Pokédex: ${_pokemon!.name}'));
+    } catch (_) {
+      // Fallback to the simple share call if the instance API doesn't accept subject.
+      SharePlus.instance.share(ShareParams(text: text));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,6 +82,13 @@ class _PokemonPageState extends State<PokemonPage> {
         ),
         title: Text(_pokemon?.name.toUpperCase() ?? 'Loading...'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: _sharePokemon,
+            tooltip: 'Share',
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
