@@ -55,8 +55,7 @@ class _PokemonPageState extends State<PokemonPage> {
     final httpsUrl = '$_webHost/pokemon/$id';
     final customUrl = '$_customScheme/pokemon/$id';
 
-    final text = 'Pokédex: ${_pokemon!.name}\n\n${_pokemon!.name.toUpperCase()}\n\nSee details:\n$httpsUrl\n'
-        'Open in app: $customUrl';
+    final text = 'Pokédex: ${_pokemon!.name}\nSee details:$httpsUrl';
 
     // share_plus's Share API may not support a `subject` named parameter
     // on all platforms/versions. Use the SharePlus.instance.share API which
@@ -65,7 +64,9 @@ class _PokemonPageState extends State<PokemonPage> {
     // platforms where available. If `subject` causes an analyzer error in
     // your environment, remove the `subject:` named parameter.
     try {
-      SharePlus.instance.share(ShareParams(text: text, title: 'Pokédex: ${_pokemon!.name}'));
+      SharePlus.instance.share(
+        ShareParams(text: text, title: 'Pokédex: ${_pokemon!.name}'),
+      );
     } catch (_) {
       // Fallback to the simple share call if the instance API doesn't accept subject.
       SharePlus.instance.share(ShareParams(text: text));
