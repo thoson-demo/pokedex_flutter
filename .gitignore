@@ -30,11 +30,7 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-# Ignore all build outputs
-/build/*
-# Allow Flutter web build
-!build/web/
-!build/web/**
+/build/
 /coverage/
 
 # Symbolication related
