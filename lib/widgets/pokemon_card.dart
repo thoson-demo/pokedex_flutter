@@ -10,12 +10,11 @@ class PokemonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: () => context.go('/pokemon/${pokemon.id}'),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -23,9 +22,9 @@ class PokemonCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: theme.colorScheme.surface,
                   borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(16),
+                    top: Radius.circular(12),
                   ),
                 ),
                 child: Hero(
@@ -47,8 +46,7 @@ class PokemonCard extends StatelessWidget {
                 children: [
                   Text(
                     '#${pokemon.id.toString().padLeft(3, '0')}',
-                    style: TextStyle(
-                      color: Colors.grey[600],
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -56,9 +54,12 @@ class PokemonCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     pokemon.name.toUpperCase(),
-                    style: const TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
+                      shadows: [
+                        Shadow(color: theme.colorScheme.primary, blurRadius: 8),
+                      ],
                     ),
                     textAlign: TextAlign.center,
                   ),

@@ -117,19 +117,24 @@ class _PokemonPageState extends State<PokemonPage> {
                     const SizedBox(height: 20),
                     Text(
                       '#${_pokemon!.id.toString().padLeft(3, '0')}',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       _pokemon!.name.toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        fontSize: 40,
+                        letterSpacing: 3,
+                        shadows: [
+                          Shadow(
+                            color: Theme.of(context).colorScheme.secondary,
+                            blurRadius: 15,
+                          ),
+                        ],
                       ),
                     ),
                   ],

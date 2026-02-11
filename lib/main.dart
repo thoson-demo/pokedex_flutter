@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:url_strategy/url_strategy.dart';
 import 'screens/home_page.dart';
 import 'screens/pokemon_page.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   // Remove the '#' from web URLs (use path URL strategy)
@@ -38,20 +39,7 @@ class PokedexApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Pokedex',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFEF5350), // Pokemon Red
-          primary: const Color(0xFFEF5350),
-          secondary: const Color(0xFFEF5350),
-        ),
-        useMaterial3: true,
-        textTheme: GoogleFonts.outfitTextTheme(),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFEF5350),
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
-      ),
+      theme: AppTheme.darkTheme,
       routerConfig: _router,
     );
   }

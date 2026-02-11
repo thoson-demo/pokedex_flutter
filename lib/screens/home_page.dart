@@ -50,13 +50,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Pokedex',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Pokedex'), centerTitle: true),
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollInfo) {
           if (!_isLoading &&
