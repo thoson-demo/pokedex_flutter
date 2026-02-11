@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/pokemon.dart';
 import '../services/pokemon_service.dart';
 import '../widgets/pokemon_card.dart';
@@ -15,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   final List<Pokemon> _pokemonList = [];
   final TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
+  bool _isFooterHovered = false;
   int _offset = 0;
   static const int _limit = 20;
   String _searchQuery = '';
@@ -144,14 +146,14 @@ class _HomePageState extends State<HomePage> {
               children: [
                 // Header & Search
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                   child: Column(
                     children: [
                       Text(
-                        'NEON POKEDEX',
+                        'POKEDEX',
                         style: theme.textTheme.displayLarge?.copyWith(
                           color: primary,
-                          fontSize: 28,
+                          fontSize: 48,
                           letterSpacing: 4,
                           shadows: [
                             Shadow(color: primary, blurRadius: 20),
@@ -162,6 +164,7 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 24),
                       // Neon Floating Search Bar
                       Container(
+                        clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                           color: theme.cardTheme.color,
                           borderRadius: BorderRadius.circular(20),
@@ -174,36 +177,39 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        child: TextField(
-                          controller: _searchController,
-                          style: TextStyle(
-                            color: theme.textTheme.bodyLarge?.color,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Search Protocol...',
-                            hintStyle: TextStyle(color: Colors.grey[600]),
-                            prefixIcon: Icon(Icons.search, color: secondary),
-                            suffixIcon: _searchController.text.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(
-                                      Icons.clear,
-                                      color: Colors.grey,
-                                    ),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      _performSearch('');
-                                    },
-                                  )
-                                : null,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 16,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: TextField(
+                            controller: _searchController,
+                            style: TextStyle(
+                              color: theme.textTheme.bodyLarge?.color,
                             ),
+                            decoration: InputDecoration(
+                              hintText: 'Search Protocol...',
+                              hintStyle: TextStyle(color: Colors.grey[600]),
+                              prefixIcon: Icon(Icons.search, color: secondary),
+                              suffixIcon: _searchController.text.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(
+                                        Icons.clear,
+                                        color: Colors.grey,
+                                      ),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        _performSearch('');
+                                      },
+                                    )
+                                  : null,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 16,
+                              ),
+                            ),
+                            onSubmitted: _performSearch,
                           ),
-                          onSubmitted: _performSearch,
                         ),
                       ),
                     ],
@@ -256,7 +262,10 @@ class _HomePageState extends State<HomePage> {
                         }
 
                         return GridView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 24,
+                          ),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: crossAxisCount,
@@ -287,13 +296,48 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '© THOSON',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 10,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.bold,
+                      MouseRegion(
+                        onEnter: (_) => setState(() => _isFooterHovered = true),
+                        onExit: (_) => setState(() => _isFooterHovered = false),
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: () async {
+                            final Uri emailLaunchUri = Uri(
+                              scheme: 'mailto',
+                              path: 'thoson.it@gmail.com',
+                            );
+                            try {
+                              if (await canLaunchUrl(emailLaunchUri)) {
+                                await launchUrl(emailLaunchUri);
+                              }
+                            } catch (e) {
+                              // Handle error
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                              bottom: 2,
+                            ), // Underline offset
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: _isFooterHovered
+                                      ? Colors.grey[600]!
+                                      : Colors.transparent,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              '© THOSON - thoson.it@gmail.com',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 10,
+                                letterSpacing: 2,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
