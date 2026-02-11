@@ -21,6 +21,7 @@
 ---
 
 ### Key Enforcements
-- **Theme:** Vibrant Red (`#DC2626`) + Warm Light Grey (`#FEF2F2`).
-- **Font:** Outfit.
-- **Style:** Block-based cards with elevation and shadows.
+- **Theme:** Cyberpunk / Neon Glow.
+- **Mode:** Dark Mode ONLY.
+- **Colors:** Neon Purple (`#7C3AED`) & Rose (`#F43F5E`).
+- **Style:** Glowing text, dark backgrounds, glassmorphism.

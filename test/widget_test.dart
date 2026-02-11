@@ -14,7 +14,7 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const PokedexApp());
 
-    // Verify that we have a title 'POKEMON WIKI'
-    expect(find.text('POKEMON WIKI'), findsOneWidget);
+    // Verify that we have a title 'NEON POKEDEX'
+    expect(find.text('NEON POKEDEX'), findsOneWidget);
   });
 }

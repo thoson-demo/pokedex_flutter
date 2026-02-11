@@ -92,164 +92,217 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final primary = theme.primaryColor;
+    final secondary = theme.colorScheme.secondary;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header Section
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-              child: Column(
-                children: [
-                  Text(
-                    'POKEMON WIKI',
-                    style: theme.textTheme.displayLarge?.copyWith(
-                      color: theme.primaryColor,
-                      fontSize: 28,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Floating Search Bar
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Search Pokemon...',
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: theme.primaryColor,
-                        ),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(
-                                  Icons.clear,
-                                  color: Colors.grey,
-                                ),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  _performSearch('');
-                                },
-                              )
-                            : null,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
-                        ),
-                      ),
-                      onSubmitted: _performSearch,
-                    ),
+      body: Stack(
+        children: [
+          // Background Glows
+          Positioned(
+            top: -100,
+            left: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: primary.withOpacity(0.15),
+                boxShadow: [
+                  BoxShadow(
+                    color: primary.withOpacity(0.2),
+                    blurRadius: 100,
+                    spreadRadius: 50,
                   ),
                 ],
               ),
             ),
+          ),
+          Positioned(
+            bottom: -100,
+            right: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: secondary.withOpacity(0.15),
+                boxShadow: [
+                  BoxShadow(
+                    color: secondary.withOpacity(0.2),
+                    blurRadius: 100,
+                    spreadRadius: 50,
+                  ),
+                ],
+              ),
+            ),
+          ),
 
-            // Grid Section
-            Expanded(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (scrollInfo) {
-                  if (!_isLoading &&
-                      _searchQuery.isEmpty &&
-                      scrollInfo.metrics.pixels ==
-                          scrollInfo.metrics.maxScrollExtent) {
-                    _loadMorePokemon();
-                  }
-                  return false;
-                },
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    int crossAxisCount;
-                    if (constraints.maxWidth > 1200) {
-                      crossAxisCount = 6;
-                    } else if (constraints.maxWidth > 900) {
-                      crossAxisCount = 5;
-                    } else if (constraints.maxWidth > 600) {
-                      crossAxisCount = 3;
-                    } else {
-                      crossAxisCount = 2;
-                    }
-
-                    if (_pokemonList.isEmpty && !_isLoading) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.search_off,
-                              size: 64,
-                              color: Colors.grey[300],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No Pokemon found',
-                              style: TextStyle(color: Colors.grey[400]),
+          SafeArea(
+            child: Column(
+              children: [
+                // Header & Search
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'NEON POKEDEX',
+                        style: theme.textTheme.displayLarge?.copyWith(
+                          color: primary,
+                          fontSize: 28,
+                          letterSpacing: 4,
+                          shadows: [
+                            Shadow(color: primary, blurRadius: 20),
+                            const Shadow(color: Colors.white, blurRadius: 2),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Neon Floating Search Bar
+                      Container(
+                        decoration: BoxDecoration(
+                          color: theme.cardTheme.color,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: primary.withOpacity(0.5)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: primary.withOpacity(0.2),
+                              blurRadius: 20,
+                              offset: const Offset(0, 5),
                             ),
                           ],
                         ),
-                      );
-                    }
-
-                    return GridView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        childAspectRatio: 0.85, // Adjusted for card content
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
+                        child: TextField(
+                          controller: _searchController,
+                          style: TextStyle(
+                            color: theme.textTheme.bodyLarge?.color,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Search Protocol...',
+                            hintStyle: TextStyle(color: Colors.grey[600]),
+                            prefixIcon: Icon(Icons.search, color: secondary),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(
+                                      Icons.clear,
+                                      color: Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      _performSearch('');
+                                    },
+                                  )
+                                : null,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
+                          ),
+                          onSubmitted: _performSearch,
+                        ),
                       ),
-                      itemCount: _pokemonList.length + (_isLoading ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == _pokemonList.length) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+
+                // Grid Section
+                Expanded(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (scrollInfo) {
+                      if (!_isLoading &&
+                          _searchQuery.isEmpty &&
+                          scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent) {
+                        _loadMorePokemon();
+                      }
+                      return false;
+                    },
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        int crossAxisCount;
+                        if (constraints.maxWidth > 1200) {
+                          crossAxisCount = 6;
+                        } else if (constraints.maxWidth > 900) {
+                          crossAxisCount = 5;
+                        } else if (constraints.maxWidth > 600) {
+                          crossAxisCount = 3;
+                        } else {
+                          crossAxisCount = 2;
+                        }
+
+                        if (_pokemonList.isEmpty && !_isLoading) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 64,
+                                  color: Colors.grey[700],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No Data Found',
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                              ],
+                            ),
                           );
                         }
-                        return PokemonCard(pokemon: _pokemonList[index]);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
 
-            // Minimal Footer
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '© ThoSon',
-                    style: TextStyle(
-                      color: Colors.grey[400],
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                        return GridView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                childAspectRatio: 0.8,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20,
+                              ),
+                          itemCount: _pokemonList.length + (_isLoading ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == _pokemonList.length) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: secondary,
+                                ),
+                              );
+                            }
+                            return PokemonCard(pokemon: _pokemonList[index]);
+                          },
+                        );
+                      },
                     ),
                   ),
-                  Text(
-                    ' • thoson.it@gmail.com',
-                    style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                ),
+
+                // Footer
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '© THOSON',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 10,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

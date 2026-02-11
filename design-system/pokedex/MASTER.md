@@ -6,9 +6,9 @@
 
 ---
 
-**Project:** Pokedex Wiki
-**Theme:** Vibrant Red (News/Media Style)
-**Category:** Information / Wiki
+**Project:** Pokedex Neon
+**Theme:** Cyberpunk / Neon Glow / Beauty App
+**Category:** Entertainment / Gaming
 
 ---
 
@@ -18,51 +18,49 @@
 
 | Role | Hex | CSS Variable | Usage |
 |------|-----|--------------|-------|
-| Primary | `#DC2626` | `--color-primary` | Main headers, active icons, primary actions |
-| Secondary | `#EF4444` | `--color-secondary` | Gradients, highlights |
-| Background | `#FEF2F2` | `--color-background` | Global scaffold background (Warm Light Grey) |
-| Surface | `#FFFFFF` | `--color-surface` | Cards, modsls, input fields |
-| Text | `#111827` | `--color-text` | Primary text (Deep Grey) |
-| Text Light | `#6B7280` | `--color-text-light` | Secondary text, hints |
+| Primary | `#7C3AED` | `--color-primary` | Neon Purple (Main actions, headers) |
+| Secondary | `#F43F5E` | `--color-secondary` | Fluorescent Rose (Highlights, gradients) |
+| Background | `#0F0F23` | `--color-background` | Deep Space Dark (Global background) |
+| Surface | `#1E1E3F` | `--color-surface` | Card background (Lighter dark) |
+| Text | `#E2E8F0` | `--color-text` | Primary text (Light Grey) |
+| Text Dim | `#94A3B8` | `--color-text-dim` | Secondary text |
 
 ### Typography
 
-- **Font Family:** [Outfit](https://fonts.google.com/specimen/Outfit)
-- **Headlines:** Bold, Uppercase, Tracking-wide.
-- **Body:** Clean, geometric sans-serif.
+- **Font Family:** [Outfit](https://fonts.google.com/specimen/Outfit) (Geometric Sans)
+- **Headlines:** Cyberpunk style - Uppercase, Wide tracking, Glow effects.
+- **Body:** Clean, legible sans-serif.
 
 ### Component Specs
 
 #### Buttons & Interactables
-- **Hover Effects:** Scale up (1.05x) with smooth transition.
-- **Shadows:** Soft, diffused shadows (`BoxShadow(color: Colors.black12, blurRadius: 10)`).
-- **Rounding:** `BorderRadius.circular(16)` for cards and inputs.
+- **Style:** Neon borders or gradients.
+- **Hover:** Glow intensity increase + Scale.
+- **Shadows:** Colored shadows (`BoxShadow(color: primary.withOpacity(0.5), blurRadius: 15)`).
 
-#### Cards (Block Style)
-- **Background:** White (`#FFFFFF`).
-- **Elevation:** Moderate to High (4-8).
-- **Border:** None (use shadow).
-- **Layout:** Full-bleed images where possible.
+#### Cards (Cyberpunk Style)
+- **Background:** Dark Surface (`#1E1E3F`).
+- **Border:** Thin neon border (optional) or Glow.
+- **Effect:** Glassmorphism overlay for text containers.
 
 ### Layout Patterns
-- **Home:** Floating Search Bar (detached from AppBar), Responsive Grid.
-- **Detail:** Vibrant Header with curved gradient, Floating Info Cards.
+- **Home:** Immersive dark grid, Floating Neon Search.
+- **Detail:** Full-screen beauty shot, glowing stats, "HUD" style info.
 
 ---
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ **Dark Mode / Neon:** Do not use the old purple/dark theme.
-- ❌ **Flat Design:** Always use shadows and depth (elevation).
-- ❌ **System Fonts:** Always use `Outfit`.
-- ❌ **Borders:** Avoid borders on cards; use shadows for separation.
+- ❌ **Light Mode:** The app is strictly Dark Mode now.
+- ❌ **Flat Design:** Use glows and gradients.
+- ❌ **Dull Colors:** Use high saturation neon colors.
+- ❌ **Standard Shadows:** Use colored/glowing shadows.
 
 ---
 
 ## Pre-Delivery Checklist
 
-- [ ] Primary color is `#DC2626`
-- [ ] Font is `Outfit`
-- [ ] Background is `#FEF2F2`
-- [ ] Cards have rounded corners (16px) and shadows
-- [ ] No borders on cards
+- [ ] Dark Mode (`#0F0F23`) is active
+- [ ] Primary Color is `#7C3AED`
+- [ ] Text is Light (`#E2E8F0`)
+- [ ] Neon Glow effects are present
