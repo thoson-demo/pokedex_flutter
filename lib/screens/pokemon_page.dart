@@ -19,10 +19,6 @@ class _PokemonPageState extends State<PokemonPage> {
   Pokemon? _pokemon;
   bool _isLoading = true;
 
-  // Base host for building shareable links. Update if your host changes.
-  static const String _webHost = 'https://pokedex.thoson.io.vn';
-  static const String _customScheme = 'pokedex://';
-
   @override
   void initState() {
     super.initState();
@@ -31,7 +27,9 @@ class _PokemonPageState extends State<PokemonPage> {
 
   Future<void> _loadPokemonDetail() async {
     try {
-      final pokemon = await _pokemonService.fetchPokemonDetail(widget.id);
+      final pokemon = await _pokemonService.fetchPokemonDetail(
+        widget.id.toString(),
+      );
       if (mounted) {
         setState(() {
           _pokemon = pokemon;
@@ -50,97 +48,338 @@ class _PokemonPageState extends State<PokemonPage> {
 
   void _sharePokemon() {
     if (_pokemon == null) return;
-
-    final id = _pokemon!.id;
-    final httpsUrl = '$_webHost/pokemon/$id';
-    final customUrl = '$_customScheme/pokemon/$id';
-
-    final text = 'Pokédex: ${_pokemon!.name}\nSee details:$httpsUrl';
-
-    // share_plus's Share API may not support a `subject` named parameter
-    // on all platforms/versions. Use the SharePlus.instance.share API which
-    // is the non-deprecated API surface.
-    // Prefer using SharePlus.instance.share; it supports `subject` on
-    // platforms where available. If `subject` causes an analyzer error in
-    // your environment, remove the `subject:` named parameter.
-    try {
-      SharePlus.instance.share(
-        ShareParams(text: text, title: 'Pokédex: ${_pokemon!.name}'),
-      );
-    } catch (_) {
-      // Fallback to the simple share call if the instance API doesn't accept subject.
-      SharePlus.instance.share(ShareParams(text: text));
-    }
+    final text = 'Check out ${_pokemon!.name} on Pokemon Wiki!';
+    SharePlus.instance.share(ShareParams(text: text));
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (_pokemon == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Error')),
+        body: const Center(child: Text('Failed to load Pokemon')),
+      );
+    }
+
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
-        ),
-        title: Text(_pokemon?.name.toUpperCase() ?? 'Loading...'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: _sharePokemon,
-            tooltip: 'Share',
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _pokemon == null
-          ? const Center(child: Text('Failed to load Pokemon'))
-          : Center(
-              child: SingleChildScrollView(
-                // For smaller screens
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Hero(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            floating: false,
+            pinned: true,
+            backgroundColor: theme.primaryColor,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => context.go('/'),
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share, color: Colors.white),
+                onPressed: _sharePokemon,
+              ),
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          theme.primaryColor,
+                          theme.colorScheme.secondary,
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: -50,
+                    top: -50,
+                    child: Opacity(
+                      opacity: 0.1,
+                      child: Icon(
+                        Icons.catching_pokemon,
+                        size: 300,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Hero(
                       tag: 'pokemon_${_pokemon!.id}',
                       child: CachedNetworkImage(
                         imageUrl: _pokemon!.imageUrl,
-                        width: 300,
-                        height: 300,
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error, size: 50),
+                        height: 200,
                         fit: BoxFit.contain,
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error, color: Colors.white),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      '#${_pokemon!.id.toString().padLeft(3, '0')}',
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              transform: Matrix4.translationValues(0, -24, 0),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(32),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            _pokemon!.name.toUpperCase(),
+                            style: theme.textTheme.displayLarge?.copyWith(
+                              fontSize: 36,
+                              color: theme.primaryColor,
+                            ),
                           ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      _pokemon!.name.toUpperCase(),
-                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        fontSize: 40,
-                        letterSpacing: 3,
-                        shadows: [
-                          Shadow(
-                            color: Theme.of(context).colorScheme.secondary,
-                            blurRadius: 15,
+                          const SizedBox(height: 8),
+                          Text(
+                            '#${_pokemon!.id.toString().padLeft(3, '0')}',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[500],
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Wrap(
+                            spacing: 12,
+                            children: _pokemon!.types
+                                .map(
+                                  (type) => Chip(
+                                    label: Text(
+                                      type.toUpperCase(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    backgroundColor: _getTypeColor(type),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                           ),
                         ],
                       ),
                     ),
+                    const SizedBox(height: 40),
+
+                    // Info Cards
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildInfoCard(
+                            context,
+                            'Height',
+                            '${_pokemon!.height ?? 0 / 10} m',
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildInfoCard(
+                            context,
+                            'Weight',
+                            '${_pokemon!.weight ?? 0 / 10} kg',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Abilities
+                    Text('Abilities', style: theme.textTheme.titleLarge),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: _pokemon!.abilities
+                          .map(
+                            (ability) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey.shade200),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 10,
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                ability.toUpperCase(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.primaryColor,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Stats
+                    Text('Base Stats', style: theme.textTheme.titleLarge),
+                    const SizedBox(height: 16),
+                    ..._pokemon!.stats.entries.map((entry) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  entry.key.toUpperCase(),
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  entry.value.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: LinearProgressIndicator(
+                                value: entry.value / 255,
+                                backgroundColor: Colors.grey[200],
+                                color: _getStatColor(entry.value),
+                                minHeight: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
             ),
+          ),
+        ],
+      ),
     );
+  }
+
+  Widget _buildInfoCard(BuildContext context, String label, String value) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(label, style: TextStyle(color: Colors.grey[400], fontSize: 14)),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getTypeColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'fire':
+        return Colors.orange;
+      case 'water':
+        return Colors.blue;
+      case 'grass':
+        return Colors.green;
+      case 'electric':
+        return Colors.amber;
+      case 'psychic':
+        return Colors.pink;
+      case 'poison':
+        return Colors.purple;
+      case 'bug':
+        return Colors.lightGreen;
+      case 'flying':
+        return Colors.indigo.shade300;
+      case 'fighting':
+        return Colors.red.shade900;
+      case 'rock':
+        return Colors.grey;
+      case 'ground':
+        return Colors.brown;
+      case 'ice':
+        return Colors.cyan;
+      case 'dragon':
+        return Colors.indigo;
+      case 'ghost':
+        return Colors.deepPurple;
+      case 'steel':
+        return Colors.blueGrey;
+      case 'fairy':
+        return Colors.pinkAccent;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Color _getStatColor(int stat) {
+    if (stat < 50) return Colors.red;
+    if (stat < 80) return Colors.amber;
+    if (stat < 100) return Colors.green;
+    return Colors.teal;
   }
 }
